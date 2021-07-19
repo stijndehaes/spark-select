@@ -2,26 +2,20 @@ name := "spark-select"
 
 organization := "io.minio"
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.12.10"
 
-crossScalaVersions := Seq("2.11.12")
+//spName := "minio/spark-select"
 
-spName := "minio/spark-select"
+//spAppendScalaVersion := true
 
-spAppendScalaVersion := true
+//spIncludeMaven := true
 
-spIncludeMaven := true
+//spIgnoreProvided := true
 
-spIgnoreProvided := true
-
-sparkVersion := "2.3.1"
-
-val testSparkVersion = settingKey[String]("The version of Spark to test against.")
-
-testSparkVersion := sys.props.get("spark.testVersion").getOrElse(sparkVersion.value)
+val sparkVersion = "3.1.2"
 
 // used spark components
-sparkComponents := Seq("sql")
+//sparkComponents := Seq("sql")
 
 assemblyMergeStrategy in assembly := {
   case "META-INF/io.netty.versions.properties" => MergeStrategy.concat
@@ -38,9 +32,13 @@ libraryDependencies ++= Seq(
   "org.mockito" % "mockito-core" % "2.0.31-beta"
 )
 
+libraryDependencies += "org.apache.spark" %% "spark-sql" % sparkVersion % "provided"
+libraryDependencies += "org.apache.spark" %% "spark-mllib" % sparkVersion % "provided"
+libraryDependencies += "org.apache.spark" %% "spark-hive" % sparkVersion % "provided"
+
 libraryDependencies ++= Seq(
-  "org.apache.spark" %% "spark-core" % testSparkVersion.value % "test" force(),
-  "org.apache.spark" %% "spark-sql" % testSparkVersion.value % "test"  force(),
+  "org.apache.spark" %% "spark-core" % sparkVersion % "test" force(),
+  "org.apache.spark" %% "spark-sql" % sparkVersion % "test"  force(),
   "org.scala-lang" % "scala-library" % scalaVersion.value % "compile"
 )
 
@@ -86,15 +84,15 @@ pomExtra := (
 // Skip tests during assembly
 test in assembly := {}
 
+/*
 ScoverageSbtPlugin.ScoverageKeys.coverageHighlighting := {
   if (scalaBinaryVersion.value == "2.10") false
   else true
 }
-
-import ReleaseTransformations._
+*/
 
 // Add publishing to spark packages as another step.
-releaseProcess := Seq[ReleaseStep](
+/*releaseProcess := Seq[ReleaseStep](
   checkSnapshotDependencies,
   inquireVersions,
   runTest,
@@ -106,4 +104,4 @@ releaseProcess := Seq[ReleaseStep](
   commitNextVersion,
   pushChanges,
   releaseStepTask(spPublish)
-)
+)*/
